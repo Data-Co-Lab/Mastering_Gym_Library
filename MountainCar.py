@@ -12,7 +12,13 @@ Memory = 1000000
 BatchSize = 15
 Exploration= 1.0
 ExplorationLimit = 0.1
-ExplorationDecay = 0.995
+ExplorationDecay = 0.9999
+
+gym.envs.register(
+    id='MountainCarCustom-v0',
+    entry_point='gym.envs.classic_control:MountainCarEnv',
+    max_episode_steps=500,
+    reward_threshold=-110.0,)
 
 class Agent:
 
@@ -52,8 +58,8 @@ class Agent:
         self.Exploration *= ExplorationDecay
         self.Exploration = max(ExplorationLimit, self.Exploration)
 
-def CartPole():
-    env = gym.make("CartPole-v1")
+def MountainCar():
+    env = gym.make("MountainCarCustom-v0")
     observation_space = env.observation_space.shape[0]
     action_space = env.action_space.n
     agent = Agent(observation_space, action_space)
@@ -64,9 +70,9 @@ def CartPole():
         Episode += 1
         state = env.reset()
         state = np.reshape(state, [1, observation_space])
-        Score = 0
+        Score = 500
         while True:
-            Score += 1
+            Score -= 1
             env.render()
             action = agent.Action(state)
             state_next, reward, terminal, info = env.step(action)
@@ -79,4 +85,4 @@ def CartPole():
             agent.Update()
 
 if __name__ == "__main__":
-    CartPole()
+    MountainCar()
