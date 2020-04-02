@@ -5,7 +5,6 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense,Flatten
 from keras.optimizers import Adam
-import matplotlib.pyplot as plt
 
 Gamma = 0.95
 LearningRate = 0.001
@@ -14,12 +13,6 @@ BatchSize = 15
 Exploration= 1.0
 ExplorationLimit = 0.1
 ExplorationDecay = 0.999
-
-gym.envs.register(
-    id='MountainCarCustom-v0',
-    entry_point='gym.envs.classic_control:MountainCarEnv',
-    max_episode_steps=700,
-    reward_threshold=-110.0,)
 
 class Agent:
 
@@ -59,23 +52,22 @@ class Agent:
         self.Exploration *= ExplorationDecay
         self.Exploration = max(ExplorationLimit, self.Exploration)
 
-def MountainCar():
-    env = gym.make("MountainCarCustom-v0")
+def Acrobot():
+    env = gym.make("Acrobot-v1")
     observation_space = env.observation_space.shape[0]
     action_space = env.action_space.n
     agent = Agent(observation_space, action_space)
     agent.NeuralNet()
     Episode = 0
-    Scores = []
     n = 50 #n is number of episodes
     while Episode < n :
         Episode += 1
         state = env.reset()
         state = np.reshape(state, [1, observation_space])
-        Score = 700
+        Score = 500
         while True:
             Score -= 1
-            #env.render()
+            env.render()
             action = agent.Action(state)
             state_next, reward, terminal, info = env.step(action)
             state_next = np.reshape(state_next, [1, observation_space])
@@ -83,14 +75,8 @@ def MountainCar():
             state = state_next
             if terminal:
                 print ("Episode: " + str(Episode) + ", exploration: " + str(agent.Exploration) + ", score: " + str(Score))
-                Scores.append(Score)
                 break
             agent.Update()
 
 if __name__ == "__main__":
-    MountainCar()
-    #y = smooth(episode_rewards)
-    plt.plot(Scores)
-    #plt.plot(y, label='smoothed')
-    #plt.legend()
-    plt.show()
+    Acrobot()

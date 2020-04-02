@@ -24,10 +24,10 @@ class Agent:
         self.model = Sequential()
 
     def NeuralNet(self) :
-        self.model.add(Dense(32, input_shape=(self.observation_space,), activation="relu"))
-        self.model.add(Dense(64, activation="relu"))
-        self.model.add(Dense(self.action_space, activation="softmax"))
-        self.model.compile(loss="categorical_crossentropy", optimizer=Adam(lr=LearningRate))
+        self.model.add(Dense(24, input_shape=(self.observation_space,), activation="relu"))
+        self.model.add(Dense(24, activation="relu"))
+        self.model.add(Dense(self.action_space, activation="linear"))
+        self.model.compile(loss="mse", optimizer=Adam(lr=LearningRate))
 
     def Save(self, state, action, reward, next_state, done) :
         self.memory.append((state, action, reward, next_state, done))
