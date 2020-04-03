@@ -89,8 +89,5 @@ def MountainCar():
 
 if __name__ == "__main__":
     MountainCar()
-    #y = smooth(episode_rewards)
     plt.plot(Scores)
-    #plt.plot(y, label='smoothed')
-    #plt.legend()
     plt.show()
