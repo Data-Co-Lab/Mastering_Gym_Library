@@ -21,5 +21,7 @@ def show_video():
     
 
 def wrap_env(env):
-  env = Monitor(env, './video', force=True)
+  def episode_callback(episode_id):
+    return episode_id%10==0
+  env = Monitor(env, './video', force=True, video_callable=episode_callback)
   return env

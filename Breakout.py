@@ -25,7 +25,7 @@ ExplorationLimit = 0.1
 ExplorationDecay = 0.995
 
 
-checkpoint_path = "/content/drive/temp/training_breakout/cp.ckpt"
+checkpoint_path = "/content/drive/My Drive/Temp/training_breakout/cp.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 
 # Create a callback that saves the model's weights
@@ -110,6 +110,7 @@ def Breakout():
     print('****************')
     agent = Agent(observation_space, action_space)
     agent.CNN()
+
     Episode = 0
     n = 50 #n is number of episodes
     while Episode < n :
@@ -145,5 +146,30 @@ def Breakout():
         print(f"While is taking {time()-start}s")
         show_video()
 
+def play():
+    env = gym.make("Breakout-v0")
+    env = wrap_env(env)
+    observation_space = env.observation_space.shape
+    action_space = env.action_space.n
+    agent = Agent(observation_space, action_space)
+    agent.CNN()
+    agent.model.load_weights(checkpoint_path)
+    state = env.reset()
+    state = np.reshape(state, (1, observation_space[0],observation_space[1],observation_space[2]))
+    state=prepare(state)
+    episode_reward = 0
+    for i in range(500):
+        action = agent.Action(state)
+        state_next, reward, terminal, info = env.step(action)
+        episode_reward += reward
+        if terminal:
+            state_next = env.reset()
+            print(f"Reward {episode_reward}")
+            show_video()
+        state_next = np.reshape(state_next, (1, observation_space[0],observation_space[1],observation_space[2]))
+        state_next=prepare(state_next)
+        state = state_next
+        
+    
 if __name__ == "__main__":
     Breakout()
