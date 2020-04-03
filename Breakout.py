@@ -19,7 +19,7 @@ from colab_preview.video import wrap_env, show_video
 Gamma = 0.95
 LearningRate = 0.001
 Memory = 1000000
-BatchSize = 5
+BatchSize = 15
 Exploration= 1.0
 ExplorationLimit = 0.1
 ExplorationDecay = 0.995
@@ -106,21 +106,28 @@ def Breakout():
         state = prepare(state)
         episode_reward = 0
         print("Epoch number {}".format(Episode))
+        start = time()
+        step = 0
         while True:
             #env.render()
-            start = time()
             action = agent.Action(state)
             state_next, reward, terminal, info = env.step(action)
+
+            step+=1
+            print(f"\rStep: {step}  Action: {action}  Reward: {reward}  Terminal: {terminal}", end="")
+            
             
             episode_reward += reward
             state_next = np.reshape(state_next, (1, observation_space[0],observation_space[1],observation_space[2]))
             state_next=prepare(state_next)
+            
             agent.Save(state, action, reward, state_next, terminal)
             state = state_next
             if terminal:
                 print ("Episode: " + str(Episode) + ", exploration: " + str(agent.Exploration) + ", score: " + str(episode_reward))
                 break
-        agent.Update()
+            agent.Update()
+        
         print(f"While is taking {time()-start}s")
         show_video()
 
