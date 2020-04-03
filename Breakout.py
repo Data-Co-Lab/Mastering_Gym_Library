@@ -24,6 +24,15 @@ Exploration= 1.0
 ExplorationLimit = 0.1
 ExplorationDecay = 0.995
 
+
+checkpoint_path = "/content/drive/temp/training_breakout/cp.ckpt"
+checkpoint_dir = os.path.dirname(checkpoint_path)
+
+# Create a callback that saves the model's weights
+cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                 save_weights_only=True,
+                                                 verbose=1)
+
 class Agent:
 
     def __init__(self, observation_space, action_space) :
@@ -69,7 +78,8 @@ class Agent:
                 q_update = (reward + Gamma * np.amax(self.model.predict(state_next)[0]))
             q_values = self.model.predict(state)
             q_values[0][action] = q_update
-            self.model.fit(state, q_values,batch_size=None, verbose=0)
+            self.model.fit(state, q_values,batch_size=None, verbose=0,
+                            callbacks=[cp_callback])
         self.Exploration *= ExplorationDecay
         self.Exploration = max(ExplorationLimit, self.Exploration)
 
@@ -83,6 +93,10 @@ def prepare(state) :
 
 def rgb2gray(rgb):
     return np.dot(rgb[...,:3], [0.299, 0.587, 0.144])
+
+
+
+
 
 
 def Breakout():
