@@ -2,11 +2,12 @@ import random
 import gym
 import numpy as np
 import tensorflow as tf
+from tensorflow.compat.v1 import Session
 from collections import deque
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten
+from tensorflow.keras.layers import Dense, Dropout, Flatten, Input
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
 import matplotlib.pyplot as plt
 from tensorflow.keras import backend as K
@@ -78,22 +79,21 @@ class Agent:
                 q_update = (reward + Gamma * np.amax(self.model.predict(state_next)[0]))
             q_values = self.model.predict(state)
             q_values[0][action] = q_update
-            self.model.fit(state, q_values,batch_size=None, verbose=0,
-                            callbacks=[cp_callback])
+            self.model.fit(state, q_values,batch_size=None, verbose=0)
         self.Exploration *= ExplorationDecay
         self.Exploration = max(ExplorationLimit, self.Exploration)
 
-def prepare(state) :
+# This will make it faster
+@tf.function(input_signature=[tf.TensorSpec(shape=(1,210, 160, 3))])
+def prepare(state):
     output = tf.image.rgb_to_grayscale(state)
     output = tf.image.crop_to_bounding_box(output, 34, 0, 160, 160)
     output = tf.image.resize(output,[32, 32],method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     output = tf.squeeze(output)
-    array = K.eval(output)
-    return np.reshape(array, (1, 32,32,1))
+    return tf.reshape(output, (1, 32,32,1))
 
 def rgb2gray(rgb):
     return np.dot(rgb[...,:3], [0.299, 0.587, 0.144])
-
 
 
 
@@ -118,7 +118,7 @@ def Breakout():
         state = env.reset()
         #plt.imshow(state)
         state = np.reshape(state, (1, observation_space[0],observation_space[1],observation_space[2]))
-        state = prepare(state)
+        state =prepare(state)
         episode_reward = 0
         print("Epoch number {}".format(Episode))
         start = time()
@@ -129,7 +129,6 @@ def Breakout():
             state_next, reward, terminal, info = env.step(action)
 
             step+=1
-            print(f"\rStep: {step}  Action: {action}  Reward: {reward}  Terminal: {terminal}", end="")
             
             
             episode_reward += reward
@@ -143,33 +142,9 @@ def Breakout():
                 break
             agent.Update()
         
-        print(f"While is taking {time()-start}s")
+        #print(f"While is taking {time()-start}s")
         show_video()
 
-def play():
-    env = gym.make("Breakout-v0")
-    env = wrap_env(env)
-    observation_space = env.observation_space.shape
-    action_space = env.action_space.n
-    agent = Agent(observation_space, action_space)
-    agent.CNN()
-    agent.model.load_weights(checkpoint_path)
-    state = env.reset()
-    state = np.reshape(state, (1, observation_space[0],observation_space[1],observation_space[2]))
-    state=prepare(state)
-    episode_reward = 0
-    for i in range(500):
-        action = agent.Action(state)
-        state_next, reward, terminal, info = env.step(action)
-        episode_reward += reward
-        if terminal:
-            state_next = env.reset()
-            print(f"Reward {episode_reward}")
-            show_video()
-        state_next = np.reshape(state_next, (1, observation_space[0],observation_space[1],observation_space[2]))
-        state_next=prepare(state_next)
-        state = state_next
-        
-    
+
 if __name__ == "__main__":
     Breakout()
