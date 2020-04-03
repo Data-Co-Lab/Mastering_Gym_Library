@@ -3,13 +3,18 @@ import gym
 import numpy as np
 import tensorflow as tf
 from collections import deque
-from keras.models import Sequential
-from keras.optimizers import Adam
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
 import matplotlib.pyplot as plt
-from keras import backend as K
+from tensorflow.keras import backend as K
+from time import time
+
+from colab_preview.video import wrap_env, show_video
+
+
 
 Gamma = 0.95
 LearningRate = 0.001
@@ -71,7 +76,7 @@ class Agent:
 def prepare(state) :
     output = tf.image.rgb_to_grayscale(state)
     output = tf.image.crop_to_bounding_box(output, 34, 0, 160, 160)
-    output = tf.image.resize_images(output,[32, 32],method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+    output = tf.image.resize(output,[32, 32],method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     output = tf.squeeze(output)
     array = K.eval(output)
     return np.reshape(array, (1, 32,32,1))
@@ -79,8 +84,10 @@ def prepare(state) :
 def rgb2gray(rgb):
     return np.dot(rgb[...,:3], [0.299, 0.587, 0.144])
 
+
 def Breakout():
     env = gym.make("Breakout-v0")
+    env = wrap_env(env)
     observation_space = env.observation_space.shape#[0]
     action_space = env.action_space.n
     print('****************')
@@ -94,14 +101,17 @@ def Breakout():
     while Episode < n :
         Episode += 1
         state = env.reset()
-        plt.imshow(state)
+        #plt.imshow(state)
         state = np.reshape(state, (1, observation_space[0],observation_space[1],observation_space[2]))
         state = prepare(state)
         episode_reward = 0
+        print("Epoch number {}".format(Episode))
         while True:
-            env.render()
+            #env.render()
+            start = time()
             action = agent.Action(state)
             state_next, reward, terminal, info = env.step(action)
+            
             episode_reward += reward
             state_next = np.reshape(state_next, (1, observation_space[0],observation_space[1],observation_space[2]))
             state_next=prepare(state_next)
@@ -111,6 +121,8 @@ def Breakout():
                 print ("Episode: " + str(Episode) + ", exploration: " + str(agent.Exploration) + ", score: " + str(episode_reward))
                 break
             agent.Update()
+            print(f"While is taking {time()-start}s")
+        show_video()
 
 if __name__ == "__main__":
     Breakout()
