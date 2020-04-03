@@ -19,7 +19,7 @@ from colab_preview.video import wrap_env, show_video
 Gamma = 0.95
 LearningRate = 0.001
 Memory = 1000000
-BatchSize = 15
+BatchSize = 5
 Exploration= 1.0
 ExplorationLimit = 0.1
 ExplorationDecay = 0.995
@@ -120,8 +120,8 @@ def Breakout():
             if terminal:
                 print ("Episode: " + str(Episode) + ", exploration: " + str(agent.Exploration) + ", score: " + str(episode_reward))
                 break
-            agent.Update()
-            print(f"While is taking {time()-start}s")
+        agent.Update()
+        print(f"While is taking {time()-start}s")
         show_video()
 
 if __name__ == "__main__":
