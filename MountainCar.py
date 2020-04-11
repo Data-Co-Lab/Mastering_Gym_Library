@@ -18,7 +18,7 @@ ExplorationDecay = 0.999
 gym.envs.register(
     id='MountainCarCustom-v0',
     entry_point='gym.envs.classic_control:MountainCarEnv',
-    max_episode_steps=700,
+    max_episode_steps=500,
     reward_threshold=-110.0,)
 
 class Agent:
