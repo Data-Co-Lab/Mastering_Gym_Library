@@ -58,7 +58,18 @@ def Update(self): #Taken from MountainCarCont.py
     self.Exploration *= ExplorationDecay
     self.Exploration = max(ExplorationLimit, self.Exploration)
 ```  
-The Update function updates every Batch's q-values using Bellman's equation and decreases the exploration rate in proportion of the decay value chosen.  
+The Update function updates every Batch's q-values using Bellman's equation and decreases the exploration rate in proportion of the decay value chosen. 
+### Creating a custom version of a Gym environment :  
+You can modify the settings of an environment by creating a custum version.  
+```Python
+gym.envs.register(
+    id='MountainCarCustom-v0',
+    entry_point='gym.envs.classic_control:MountainCarEnv',
+    max_episode_steps=500,
+    reward_threshold=-110.0,)
+```  
+In this case we decided to increase the number of steps allowed in every episode for better training (from 200 to 500).  
+**Please refrain from submitting your results to the Gym leaderboard if you temper with the environment default settings.**
 ## Atari Games : 
 The main difference here is that the Atari games observation is now an image of the game so we are going to use a Convolutional Neural Network :  
 ```Python
