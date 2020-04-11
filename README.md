@@ -94,4 +94,5 @@ def prepare(state) :
     array = K.eval(output)
     return np.reshape(array, (1, 32,32,1))
 ```
-Note that the training process for Atari Games is way longer than the classic ones.
+Note that the training process for Atari Games is way longer than the classic ones.  
+![alt text](Breakout.PNG "Training") 
