@@ -60,7 +60,7 @@ def Update(self): #Taken from MountainCarCont.py
 ```  
 The Update function updates every Batch's q-values using Bellman's equation and decreases the exploration rate in proportion of the decay value chosen. 
 ### Creating a custom version of a Gym environment :  
-You can modify the settings of an environment by creating a custum version.  
+You can modify the settings of an environment by creating a custom version.  
 ```Python
 gym.envs.register(
     id='MountainCarCustom-v0',
