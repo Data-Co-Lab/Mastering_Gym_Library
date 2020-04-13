@@ -69,7 +69,9 @@ gym.envs.register(
     reward_threshold=-110.0,)
 ```  
 In this case we decided to increase the number of steps allowed in every episode for better training (from 200 to 500).  
-**Please refrain from submitting your results to the Gym leaderboard if you temper with the environment default settings.**
+**Please refrain from submitting your results to the Gym leaderboard if you temper with the environment default settings.**  
+  
+[**Video demonstration**](https://youtu.be/wlvRlOJ9WG4)  
 ## Atari Games : 
 The main difference here is that the Atari games observation is now an image of the game so we are going to use a Convolutional Neural Network :  
 ```Python
@@ -95,4 +97,5 @@ def prepare(state) :
     return np.reshape(array, (1, 32,32,1))
 ```
 Note that the training process for Atari Games is way longer than the classic ones.  
-![alt text](Breakout.PNG "Training") 
+![alt text](Breakout.PNG "Training")  
+Unfortunately we were not able to record the training of our agent on an Atari game (Breakout) due to hardware limitations (it took a long time just to get a couple of episodes going), but the results were promising.
